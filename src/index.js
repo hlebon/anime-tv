@@ -3,7 +3,11 @@ import ReactDOM from "react-dom";
 import _axios from "axios";
 import styled from "styled-components";
 import ReactModal from "react-modal";
+import Search from "./components/search";
+import Animes from "./components/animes";
+import HistorySearch from "./components/historySearch";
 import "bootstrap/dist/css/bootstrap-reboot.min.css";
+import "./styles.css";
 
 const axios = _axios.create({
   baseURL: "https://api.jikan.moe/v3/search",
@@ -30,58 +34,44 @@ const Center = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  padding-top: 70px;
 `;
 
-const Input = styled.input`
-  padding: 0.5rem;
-  margin: 0;
+const Title = styled.h2`
+  color: gray;
 `;
 
-const Submit = styled.button`
+const Container = styled.div`
+  display: flex;
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
   padding: 0.5rem;
-  cursor: pointer;
 `;
 
 function AnimeDetail({ data }) {
   return (
-    <div>
-      <h3>{data.title}</h3>
-    </div>
-  );
-}
-
-function AnimeCard({ data: { title, synopsis }, onClick }) {
-  function handleOnKeyDown(e) {
-    if (e.key === " " || e.key === "Enter" || e.key === "Spacebar") {
-      handleOnClick();
-    }
-  }
-
-  function handleOnClick() {
-    onClick();
-  }
-  return (
-    <div>
-      <h3
-        tabIndex={0}
-        role={"button"}
-        onClick={handleOnClick}
-        onKeyDown={handleOnKeyDown}
-      >
-        {title}
-      </h3>
-      <p>{synopsis}</p>
-    </div>
+    <Container>
+      <img src={data.image_url} alt={data.title + "  poster"} />
+      <Content>
+        <h3>{data.title}</h3>
+        <p>{data.synopsis}</p>
+      </Content>
+    </Container>
   );
 }
 
 function App() {
   const [animes, setAnimes] = React.useState([]);
-  const [searchValue, setSearchValue] = React.useState("");
   const [animeSelected, setAnime] = React.useState({ title: "" });
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [lastSearchs, setLastSearchs] = React.useState([]);
 
   function searchAnime(query) {
+    setIsLoading(true);
     axios
       .get(ANIME, {
         params: {
@@ -92,49 +82,27 @@ function App() {
       .then(resp => resp.data)
       .then(resp => {
         setAnimes(resp.results);
+        setLastSearchs(ls => [query, ...ls]);
       })
-      .catch(e => console.log(e.message));
+      .catch(e => console.log(e.message))
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
-
-  function handleOnSubmit(e) {
-    e.preventDefault();
-    searchAnime(searchValue);
-  }
-  console.log(animes);
   return (
     <>
-      <Center>
-        <h2>Find your favorite Anime</h2>
-        <form onSubmit={handleOnSubmit}>
-          <label>
-            <Input
-              type="text"
-              name="search"
-              value={searchValue}
-              onChange={({ target }) => setSearchValue(target.value)}
-            />
-          </label>
-          <Submit type="submit">Search</Submit>
-        </form>
-        {animes.length > 0 ? (
-          <ul>
-            {animes.map(anime => {
-              return (
-                <li key={anime.mal_id}>
-                  <AnimeCard
-                    data={anime}
-                    onClick={() => {
-                      setIsModalOpen(true);
-                      setAnime(anime);
-                    }}
-                  />
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <div>There is no anime to display</div>
-        )}
+      <Center direcction="column">
+        <Title>Find your favorite Anime</Title>
+        <Search onSubmit={searchAnime} isLoading={isLoading} />
+        <HistorySearch data={lastSearchs} />
+        <Animes
+          isLoading={isLoading}
+          data={animes}
+          onClick={anime => {
+            setAnime(anime);
+            setIsModalOpen(true);
+          }}
+        />
       </Center>
       <Modal
         isOpen={isModalOpen}
