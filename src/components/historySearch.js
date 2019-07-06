@@ -1,5 +1,5 @@
 import React from "react";
-import { List, Item, Badge } from "../style";
+import { List, Item, Badge } from "../styles";
 
 function HistorySearch({ data }) {
   return (

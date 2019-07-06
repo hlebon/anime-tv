@@ -1,20 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import _axios from "axios";
 import styled from "styled-components";
 import ReactModal from "react-modal";
 import Search from "./components/search";
 import Animes from "./components/animes";
 import HistorySearch from "./components/historySearch";
+import AnimeDetail from "./components/animeDetail";
+import { WithNotifications } from "./components/notifications";
+import * as API from "./services/API";
+import { Center, Layout } from "./styles";
 import "bootstrap/dist/css/bootstrap-reboot.min.css";
-import "./styles.css";
-
-const axios = _axios.create({
-  baseURL: "https://api.jikan.moe/v3/search",
-  timeout: 200000
-});
-
-const ANIME = `/anime`;
 
 const Modal = styled(ReactModal)`
   width: 95%;
@@ -29,41 +24,15 @@ const Modal = styled(ReactModal)`
   }
 `;
 
-const Center = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding-top: 70px;
-`;
-
-const Title = styled.h2`
+const Title = styled.h1`
+  text-align: center;
+  width: 100%;
   color: gray;
+  margin: auto;
+  margin-bottom: 1rem;
 `;
 
-const Container = styled.div`
-  display: flex;
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0.5rem;
-`;
-
-function AnimeDetail({ data }) {
-  return (
-    <Container>
-      <img src={data.image_url} alt={data.title + "  poster"} />
-      <Content>
-        <h3>{data.title}</h3>
-        <p>{data.synopsis}</p>
-      </Content>
-    </Container>
-  );
-}
-
-function App() {
+const App = WithNotifications(props => {
   const [animes, setAnimes] = React.useState([]);
   const [animeSelected, setAnime] = React.useState({ title: "" });
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -72,17 +41,11 @@ function App() {
 
   function searchAnime(query) {
     setIsLoading(true);
-    axios
-      .get(ANIME, {
-        params: {
-          q: query,
-          limit: 5
-        }
-      })
-      .then(resp => resp.data)
+    API.getAnimesByQuery({ query })
       .then(resp => {
-        setAnimes(resp.results);
+        setAnimes(resp);
         setLastSearchs(ls => [query, ...ls]);
+        props.showNotification("Animes loaded", 3);
       })
       .catch(e => console.log(e.message))
       .finally(() => {
@@ -91,7 +54,7 @@ function App() {
   }
   return (
     <>
-      <Center direcction="column">
+      <Layout direcction="column">
         <Title>Find your favorite Anime</Title>
         <Search onSubmit={searchAnime} isLoading={isLoading} />
         <HistorySearch data={lastSearchs} />
@@ -103,7 +66,7 @@ function App() {
             setIsModalOpen(true);
           }}
         />
-      </Center>
+      </Layout>
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
@@ -113,7 +76,7 @@ function App() {
       </Modal>
     </>
   );
-}
+});
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);

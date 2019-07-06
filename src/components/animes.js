@@ -1,19 +1,23 @@
 import React from "react";
 import styled from "styled-components";
+import Spinner from "@atlaskit/spinner";
 import AnimeCard from "./animeCard";
-import { List, Item } from "../style";
+import { List, Item, Center } from "../styles";
 
 const Container = styled.section`
   width: 100%;
   max-width: 800px;
   margin-top: 1rem;
-  padding: 2rem;
 `;
 
-function Animes({ data: animes, onClick }) {
+function Animes({ data: animes, onClick, isLoading }) {
   return (
     <Container>
-      {animes.length > 0 ? (
+      {isLoading ? (
+        <Center>
+          <Spinner size="large" />
+        </Center>
+      ) : animes.length > 0 ? (
         <List direction="column">
           {animes.map(anime => (
             <Item
