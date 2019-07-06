@@ -28,6 +28,8 @@ const Title = styled.h1`
   text-align: center;
   width: 100%;
   color: gray;
+  font-size: 1.5rem;
+  font-weight: 500;
   margin: auto;
   margin-bottom: 1rem;
 `;

@@ -15,7 +15,7 @@ function Animes({ data: animes, onClick, isLoading }) {
     <Container>
       {isLoading ? (
         <Center>
-          <Spinner size="large" />
+          <Spinner size="medium" />
         </Center>
       ) : animes.length > 0 ? (
         <List direction="column">

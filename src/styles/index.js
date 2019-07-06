@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const Layout = styled.div`
   width: 95%;
+  padding-top: 1rem;
   margin: auto;
 `;
 
@@ -15,8 +16,8 @@ export const Center = styled.div`
 
 export const List = styled.ul`
   list-style: none;
-  padding: 0;
   display: flex;
+  padding: 0;
   flex-direction: ${({ direction }) => direction};
 `;
 
