@@ -1,8 +1,5 @@
-.App {
-  font-family: sans-serif;
-  text-align: center;
-}
-
-.title {
-  color: red;
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
 }

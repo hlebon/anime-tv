@@ -1,16 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import Media from "react-media";
-import { MdStar } from "react-icons/md";
 import Tag from "./tag";
-import { Badge } from "../styles";
 
 const Container = styled.div`
   min-width: 300px;
-  border: 1px solid lightblue;
-  padding: 1rem;
+  border: 1px solid #dedede;
   box-shadow: 1px 3px 7px #e9e9e9;
-  border-radius: 7px;
   transition: transform 0.3s ease-out;
   &:hover {
     box-shadow: 1px 7px 14px #e9e9e9;
@@ -20,7 +16,7 @@ const Container = styled.div`
 `;
 
 const Title = styled.h3`
-  text-align: center;
+  text-align: left;
 `;
 
 const Content = styled.div`
@@ -32,7 +28,8 @@ const Img = styled.img`
   height: 200px;
 `;
 const Detail = styled.div`
-  margin-left: 1rem;
+  padding: 0.5rem;
+  padding-left: 1rem;
 `;
 
 function AnimeCard({
@@ -55,21 +52,21 @@ function AnimeCard({
   }
   return (
     <Container>
-      <Title
-        tabIndex={0}
-        role={"button"}
-        onClick={handleOnClick}
-        onKeyDown={handleOnKeyDown}
-      >
-        {title}
-      </Title>
       <Content>
         <Img src={image_url} alt={title + " Poster"} />
         <Detail>
+          <Title
+            tabIndex={0}
+            role={"button"}
+            onClick={handleOnClick}
+            onKeyDown={handleOnKeyDown}
+          >
+            {title}
+          </Title>
           <Media query="(max-width: 599px)">
             {matches =>
               matches ? (
-                <Resumen>{synopsis.substring(0, 60)}</Resumen>
+                <Resumen>{synopsis.substring(0, 65)}...</Resumen>
               ) : (
                 <Resumen>{synopsis}</Resumen>
               )

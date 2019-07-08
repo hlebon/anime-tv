@@ -8,7 +8,7 @@ import HistorySearch from "./components/historySearch";
 import AnimeDetail from "./components/animeDetail";
 import { WithNotifications } from "./components/notifications";
 import * as API from "./services/API";
-import { Center, Layout } from "./styles";
+import { Layout } from "./styles";
 import "bootstrap/dist/css/bootstrap-reboot.min.css";
 
 const Modal = styled(ReactModal)`
@@ -17,8 +17,7 @@ const Modal = styled(ReactModal)`
   background: white;
   margin: auto;
   margin-top: 2rem;
-  padding: 1rem;
-  border: 1px solid gray;
+  border: 1px solid #e8e8e8;
   @media (min-width: 768px) {
     width: 70%;
   }
@@ -39,19 +38,35 @@ const App = WithNotifications(props => {
   const [animeSelected, setAnime] = React.useState({ title: "" });
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [lastSearchs, setLastSearchs] = React.useState([]);
+  const [lastSearchs, setLastSearchs] = React.useState([
+    "naruto",
+    "boruto",
+    "one piece man",
+    "one punch man",
+    "dragon ball super"
+  ]);
 
-  function searchAnime(query) {
+  function searchAnime(query, refEl = null) {
     setIsLoading(true);
     API.getAnimesByQuery({ query })
       .then(resp => {
         setAnimes(resp);
-        setLastSearchs(ls => [query, ...ls]);
-        props.showNotification("Animes loaded", 3);
+        setLastSearchs(ls => {
+          if (!ls.includes(query)) {
+            return [query, ...ls];
+          } else {
+            return [query, ...ls.filter(v => query !== v)];
+          }
+        });
       })
-      .catch(e => console.log(e.message))
+      .catch(e => console.error(e.message))
       .finally(() => {
         setIsLoading(false);
+        if (refEl) {
+          refEl.scrollIntoView({
+            behavior: "smooth"
+          });
+        }
       });
   }
   return (
@@ -59,7 +74,7 @@ const App = WithNotifications(props => {
       <Layout direcction="column">
         <Title>Find your favorite Anime</Title>
         <Search onSubmit={searchAnime} isLoading={isLoading} />
-        <HistorySearch data={lastSearchs} />
+        <HistorySearch data={lastSearchs} onClick={searchAnime} />
         <Animes
           isLoading={isLoading}
           data={animes}

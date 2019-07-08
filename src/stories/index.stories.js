@@ -7,6 +7,8 @@ import { linkTo } from "@storybook/addon-links";
 import { Button, Welcome } from "@storybook/react/demo";
 
 import TabButton from "../components/tabButton";
+import InputSearch from "../components/form/inputSearch";
+import Search from "../components/search";
 
 storiesOf("Welcome", module).add("to Storybook", () => (
   <Welcome showApp={linkTo("Button")} />
@@ -24,3 +26,6 @@ storiesOf("Button", module)
     </Button>
   ))
   .add("tab button", () => <TabButton>Saint Seiya</TabButton>);
+
+storiesOf("Input", module).add("search", () => <InputSearch />);
+storiesOf("Form Search", module).add("Search", () => <Search />);

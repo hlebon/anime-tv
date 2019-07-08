@@ -13,26 +13,49 @@ const Title = styled.h3`
   font-weight: 400;
 `;
 
-function HistorySearch({ data }) {
+function HistorySearch({ data, onClick }) {
   return (
-    <Section>
+    <>
       {data.length > 0 && (
-        <>
+        <Section>
           <Title>Last search</Title>
-          <List style={{ overflowX: "auto", whiteSpace: "nowrap" }}>
-            {data.map((ls, index) => (
-              <Item margin="3px" style={{ display: "inline-block" }}>
-                {index === 0 ? (
-                  <TabButton borderColor="green">{ls}</TabButton>
-                ) : (
-                  <TabButton>{ls}</TabButton>
-                )}
-              </Item>
-            ))}
+          <List
+            style={{
+              overflowX: "auto",
+              whiteSpace: "nowrap",
+              minHeight: "60px"
+            }}
+          >
+            {data.map((lastSearch, index) => {
+              let key = lastSearch.replace(" ", "");
+              return (
+                <Item
+                  id={key}
+                  key={key}
+                  margin="3px"
+                  style={{ display: "inline-block" }}
+                >
+                  {index === 0 ? (
+                    <TabButton disabled borderColor="green">
+                      {lastSearch}
+                    </TabButton>
+                  ) : (
+                    <TabButton
+                      onClick={e => {
+                        e.preventDefault();
+                        onClick(lastSearch, e.target);
+                      }}
+                    >
+                      {lastSearch}
+                    </TabButton>
+                  )}
+                </Item>
+              );
+            })}
           </List>
-        </>
+        </Section>
       )}
-    </Section>
+    </>
   );
 }
 
