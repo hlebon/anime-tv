@@ -6,7 +6,7 @@
   "main": "src/index.js",
   "dependencies": {
     "@atlaskit/spinner": "^12.0.3",
-    "axios": "0.19.0",
+    "axios": "0.21.1",
     "bootstrap": "4.3.1",
     "react": "16.8.6",
     "react-dom": "16.8.6",
